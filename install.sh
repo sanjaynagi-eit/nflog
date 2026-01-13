@@ -2,7 +2,7 @@
 # Simple installer that clones the repository and installs nextlog in editable mode.
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/your-org/nextlog.git}"
+REPO_URL="${REPO_URL:-https://github.com/sanjaynagi-eit/nextlog.git}"
 TARGET_DIR="${TARGET_DIR:-$HOME/.local/share/nextlog-src}"
 BRANCH="${BRANCH:-main}"
 

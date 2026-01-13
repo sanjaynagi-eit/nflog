@@ -1,4 +1,4 @@
-# nextlog (Nextflow log inspector)
+# 🚀 nextlog 
 
 `nextlog` is a small CLI and Python library that inspects recent Nextflow runs in a project directory. It reads `.nextflow/history`, `.nextflow.log`, and `work/**/.command.*` files to summarize runs and surface failing tasks quickly.
 
@@ -11,7 +11,7 @@ pip install -e .
 ### One-liner installer
 
 ```bash
-REPO_URL=https://github.com/your-org/nextlog.git bash -c "$(curl -fsSL https://raw.githubusercontent.com/your-org/nextlog/main/nextlog/install.sh)"
+REPO_URL=https://github.com/sanjaynagi-eit/nextlog.git bash -c "$(curl -fsSL https://raw.githubusercontent.com/sanjaynagi-eit/nextlog/main/nextlog/install.sh)"
 ```
 
 You can also run the script locally after cloning: `REPO_URL=<repo> bash nextlog/install.sh`. Override `TARGET_DIR` or `BRANCH` as needed.
