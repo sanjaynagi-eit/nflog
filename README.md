@@ -4,7 +4,7 @@
 
 ## Install
 
-Clone the repo and install with.
+Clone the repo and install with pip:
 
 ```bash
 pip install -e .
