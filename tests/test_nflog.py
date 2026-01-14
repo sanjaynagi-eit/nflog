@@ -7,8 +7,8 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from nextlog import get_errors, get_run, get_status, list_runs
-from nextlog.cli import cli
+from nflog import get_errors, get_run, get_status, list_runs
+from nflog.cli import cli
 
 
 def write_file(path: Path, content: str) -> None:
@@ -110,3 +110,40 @@ def test_cli_runs_json(tmp_path: Path) -> None:
     assert result.exit_code == 0
     payload = json.loads(result.output)
     assert payload[0]["run_id"] == "sess-cli"
+
+
+def test_errors_index_alias_and_table(tmp_path: Path) -> None:
+    base = tmp_path / "proj"
+    start = datetime(2024, 1, 6, 9, 0, 0)
+    make_history_run(base, start, "15s", "errs", "ERR", "sess-alias")
+    task_dir = make_task(base, "dd/task4", 1, err_content="boom", name="alias_proc")
+    touch_with_time(task_dir / ".exitcode", start + timedelta(seconds=5))
+    touch_with_time(task_dir / ".command.err", start + timedelta(seconds=5))
+
+    runner = CliRunner()
+    by_option = runner.invoke(cli, ["--base-dir", str(base), "errors", "--index", "1"])
+    by_arg = runner.invoke(cli, ["--base-dir", str(base), "errors", "1"])
+
+    assert by_option.exit_code == 0
+    assert by_arg.exit_code == 0
+    assert by_option.output == by_arg.output
+    assert "Work dir" not in by_option.output
+    assert "alias_proc" in by_option.output
+
+
+def test_cli_default_summary(tmp_path: Path) -> None:
+    base = tmp_path / "proj"
+    start = datetime(2024, 1, 7, 10, 0, 0)
+    make_history_run(base, start, "30s", "summary", "ERR", "sess-summary")
+    task_dir = make_task(base, "ee/task5", 1, err_content="summary error", name="summary_proc")
+    touch_with_time(task_dir / ".exitcode", start + timedelta(seconds=10))
+    touch_with_time(task_dir / ".command.err", start + timedelta(seconds=10))
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--base-dir", str(base)])
+
+    assert result.exit_code == 0
+    assert "Overall summary" in result.output
+    assert "sess-summary" in result.output
+    assert "Errors for sess-summary" in result.output
+    assert "summary_proc" in result.output

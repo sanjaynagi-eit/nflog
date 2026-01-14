@@ -9,7 +9,7 @@ from typing import List
 from .models import ErrorItem, RunDetails
 from .utils import file_mtime, iter_task_dirs, tail_text, within_window
 
-LOG = logging.getLogger("nextlog")
+LOG = logging.getLogger("nflog")
 
 
 def get_errors(run: RunDetails, limit: int = 5) -> List[ErrorItem]:

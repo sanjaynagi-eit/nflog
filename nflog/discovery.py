@@ -8,7 +8,7 @@ from typing import Iterable, List, Optional
 from .models import RunDetails, RunSummary
 from .utils import fallback_run_id, map_status, parse_duration, parse_history_timestamp, parse_log_timestamp
 
-LOG = logging.getLogger("nextlog")
+LOG = logging.getLogger("nflog")
 
 
 def list_runs(base_dir: Path | str = ".") -> List[RunSummary]:

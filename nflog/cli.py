@@ -13,7 +13,7 @@ from rich.table import Table
 from . import get_errors, get_run, get_status, list_runs
 from .errors import open_in_pager
 
-LOG = logging.getLogger("nextlog")
+LOG = logging.getLogger("nflog")
 console = Console()
 
 
@@ -33,7 +33,14 @@ def _status_style(value: str) -> str:
     return f"[{color}]{value}[/]"
 
 
-@click.group()
+def _print_default_summary(ctx: click.Context) -> None:
+    console.print("[bold cyan]Overall summary[/bold cyan]")
+    ctx.invoke(status, run_id=None, as_json=False)
+    console.print()
+    ctx.invoke(errors, index=None, index_opt=None, run_id=None, show=5, open_paths=False, as_json=False)
+
+
+@click.group(invoke_without_command=True)
 @click.option("--base-dir", default=".", type=click.Path(file_okay=False, dir_okay=True), help="Nextflow project directory.")
 @click.option("--debug", is_flag=True, help="Enable debug logging.")
 @click.pass_context
@@ -41,6 +48,8 @@ def cli(ctx: click.Context, base_dir: str, debug: bool) -> None:
     """Inspect and debug recent Nextflow runs."""
     _setup_logging(debug)
     ctx.obj = {"base_dir": Path(base_dir).resolve()}
+    if ctx.invoked_subcommand is None:
+        _print_default_summary(ctx)
 
 
 @cli.command()
@@ -100,15 +109,25 @@ def status(ctx: click.Context, run_id: Optional[str], as_json: bool) -> None:
 
 @cli.command()
 @click.option("--run", "run_id", help="Run id or prefix (defaults to most recent).")
+@click.argument("index", required=False, type=int)
 @click.option("--show", default=5, show_default=True, help="How many errors to display.")
+@click.option("--index", "index_opt", type=int, help="Pick a specific error by index (1-based).")
 @click.option("--open", "open_paths", is_flag=True, help="Open error files in $PAGER.")
 @click.option("--json", "as_json", is_flag=True, help="Output JSON.")
 @click.pass_context
-def errors(ctx: click.Context, run_id: Optional[str], show: int, open_paths: bool, as_json: bool) -> None:
+def errors(ctx: click.Context, index: Optional[int], run_id: Optional[str], show: int, index_opt: Optional[int], open_paths: bool, as_json: bool) -> None:
     """Display failing tasks with .command.err content."""
     base_dir: Path = ctx.obj["base_dir"]
+    pick_index = index_opt if index_opt is not None else index
+    if pick_index is not None and pick_index < 1:
+        raise click.UsageError("Index must be 1 or greater.")
     run = get_run(run_id, base_dir)
-    error_items = get_errors(run, limit=show)
+    error_items = get_errors(run, limit=pick_index or show)
+    if pick_index is not None:
+        if len(error_items) < pick_index:
+            console.print(f"No failing task found at index {pick_index} for run {run.run_id}")
+            return
+        error_items = [error_items[pick_index - 1]]
     if as_json:
         click.echo(json.dumps([asdict(e) for e in error_items], default=str, indent=2))
         return
@@ -119,14 +138,13 @@ def errors(ctx: click.Context, run_id: Optional[str], show: int, open_paths: boo
     table.add_column("#")
     table.add_column("Process")
     table.add_column("Exit")
-    table.add_column("Work dir")
     table.add_column(".command.err / .log tail")
-    for idx, err in enumerate(error_items, start=1):
+    start_index = pick_index or 1
+    for offset, err in enumerate(error_items, start=start_index):
         table.add_row(
-            str(idx),
+            str(offset),
             err.process_name or "-",
             str(err.exit_code) if err.exit_code is not None else "-",
-            str(err.work_dir),
             (err.err_excerpt or "").splitlines()[-1] if err.err_excerpt else "",
         )
     console.print(table)
@@ -140,7 +158,7 @@ def errors(ctx: click.Context, run_id: Optional[str], show: int, open_paths: boo
 
 @cli.command()
 @click.option("--run", "run_id", help="Run id or prefix (defaults to most recent).")
-@click.option("--index", type=int, help="Index from `nextlog errors` (1-based).")
+@click.option("--index", type=int, help="Index from `nflog errors` (1-based).")
 @click.option("--workdir", type=click.Path(file_okay=False, dir_okay=True), help="Explicit work directory path.")
 @click.option("--json", "as_json", is_flag=True, help="Output JSON.")
 @click.pass_context
@@ -169,7 +187,7 @@ def errfile(ctx: click.Context, run_id: Optional[str], index: Optional[int], wor
 
 
 def main() -> None:
-    cli(prog_name="nextlog")
+    cli(prog_name="nflog")
 
 
 if __name__ == "__main__":

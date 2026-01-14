@@ -1,5 +1,5 @@
 """
-nextlog exposes helpers to inspect Nextflow runs from local artifacts.
+nflog exposes helpers to inspect Nextflow runs from local artifacts.
 """
 from .models import ErrorItem, RunDetails, RunStatus, RunSummary
 from .discovery import get_run, list_runs

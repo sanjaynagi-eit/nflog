@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Simple installer that clones the repository and installs nextlog in editable mode.
+# Simple installer that clones the repository and installs nflog in editable mode.
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/sanjaynagi-eit/nextlog.git}"
-TARGET_DIR="${TARGET_DIR:-$HOME/.local/share/nextlog-src}"
+REPO_URL="${REPO_URL:-https://github.com/sanjaynagi-eit/nflog.git}"
+TARGET_DIR="${TARGET_DIR:-$HOME/.local/share/nflog-src}"
 BRANCH="${BRANCH:-main}"
 
-echo "Installing nextlog from $REPO_URL (branch: $BRANCH) into $TARGET_DIR"
+echo "Installing nflog from $REPO_URL (branch: $BRANCH) into $TARGET_DIR"
 
 if [ -d "$TARGET_DIR/.git" ]; then
   echo "Updating existing checkout..."
@@ -17,8 +17,8 @@ else
   git clone --branch "$BRANCH" "$REPO_URL" "$TARGET_DIR"
 fi
 
-cd "$TARGET_DIR/nextlog"
+cd "$TARGET_DIR"
 python -m pip install --upgrade pip >/dev/null
 python -m pip install -e .
 
-echo "nextlog installed from $TARGET_DIR/nextlog"
+echo "nflog installed from $TARGET_DIR"

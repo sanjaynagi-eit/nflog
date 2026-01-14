@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Iterable, Optional
 
-LOG = logging.getLogger("nextlog")
+LOG = logging.getLogger("nflog")
 
 
 def parse_history_timestamp(raw: str) -> Optional[datetime]:

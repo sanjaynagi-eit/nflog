@@ -3,23 +3,23 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "nextlog"
+name = "nflog"
 version = "0.1.0"
 description = "Inspect and debug Nextflow runs from the filesystem"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "nextlog", email = "dev@nextlog.local" }]
+authors = [{ name = "nflog", email = "dev@nflog.local" }]
 dependencies = [
   "click>=8.1",
   "rich>=13.7",
 ]
 
 [project.urls]
-Homepage = "https://example.com/nextlog"
+Homepage = "https://example.com/nflog"
 
 [project.scripts]
-nextlog = "nextlog.cli:main"
+nflog = "nflog.cli:main"
 
 [tool.pytest.ini_options]
-testpaths = ["tests_nextlog"]
+testpaths = ["tests"]

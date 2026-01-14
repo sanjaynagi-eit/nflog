@@ -7,7 +7,7 @@ from typing import Dict, Optional
 from .models import RunDetails, RunStatus
 from .utils import file_mtime, iter_task_dirs, within_window
 
-LOG = logging.getLogger("nextlog")
+LOG = logging.getLogger("nflog")
 
 
 def get_status(run: RunDetails) -> RunStatus:
