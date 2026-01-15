@@ -19,7 +19,7 @@ pip install -e .
 - Show a specific failure: `nflog f 3` (prints the error/log content)
 
 Use `--json` on any command for machine-readable output and `--debug` to see which artifacts were used.
-Use `--tsv` for tab-separated tables when piping into scripts.
+Use `--tsv` for tab-separated tables.
 
 ### Examples
 
