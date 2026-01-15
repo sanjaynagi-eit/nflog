@@ -70,10 +70,10 @@ $ nflog status --run sess-789
  Derived from  work/.exitcode files
 ```
 
-Failed tasks (table view):
+Failed tasks (table view) `nflog f` for shorthand:
 
 ```
-$ nflog failed --run sess-456 --show 2
+$ nflog failed --show 2
 🪵 Failed tasks for sess-456
  #   Process        Exit   .command.err / .log tail
  1   qc_reads       1      fastqc: command not found
