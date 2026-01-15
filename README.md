@@ -1,4 +1,4 @@
-# 🪵 nextlog 
+# 🪵 nflog 
 
 `nflog` is a small CLI and Python library that inspects recent Nextflow runs in a project directory. It reads `.nextflow/history`, `.nextflow.log`, and `work/**/.command.*` files to summarize runs and surface failing tasks quickly.
 
